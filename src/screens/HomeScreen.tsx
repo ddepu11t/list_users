@@ -1,5 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Box, Button, FlatList, Text, View } from 'native-base'
+import { SafeAreaView } from 'react-native'
 import { AntDesign, Octicons } from '@expo/vector-icons'
 import User from '../components/User'
 import { fetchUsers } from '../service/api'
@@ -14,7 +15,7 @@ const HomeScreen: FC = () => {
     loading: boolean
   }>({ data: [], loading: true })
 
-  const [results, setResults] = useState(6)
+  const [results, setResults] = useState(7)
   const [gender, setGender] = useState('female')
   const [scrollBottomLoading, setScrollBottomLoading] = useState(false)
 
@@ -57,47 +58,52 @@ const HomeScreen: FC = () => {
 
   return (
     <View flex={0}>
-      {users.loading ? (
-        <Spinner message='fetching users...' />
-      ) : (
-        <FlatList
-          ref={flatListRef}
-          keyExtractor={(item) => item.dob.date}
-          data={users.data}
-          renderItem={({ item }) => {
-            let { email, gender, phone } = item
+      <Box height={'100%'} px={0}>
+        {users.loading ? (
+          <Spinner message='fetching users...' />
+        ) : (
+          <SafeAreaView style={{ flex: 1 }}>
+            <FlatList
+              ref={flatListRef}
+              keyExtractor={(item) => item.dob.date}
+              data={users.data}
+              renderItem={({ item }) => {
+                let { email, gender, phone } = item
 
-            return (
-              <User
-                key={item.dob.date}
-                email={email}
-                gender={gender}
-                mobileNo={phone}
-                dpURL={item.picture.medium}
-                fullName={`${item.name.title} ${item.name.first} ${item.name.last}`}
-                isActive={false}
-              />
-            )
-          }}
-          onEndReached={handleReachedEndOfTheList}
-        />
-      )}
+                return (
+                  <User
+                    key={item.dob.date}
+                    email={email}
+                    gender={gender}
+                    mobileNo={phone}
+                    dpURL={item.picture.medium}
+                    fullName={`${item.name.title} ${item.name.first} ${item.name.last}`}
+                    isActive={false}
+                  />
+                )
+              }}
+              onEndReached={handleReachedEndOfTheList}
+              ItemSeparatorComponent={() => <View />}
+            />
+          </SafeAreaView>
+        )}
 
-      {scrollBottomLoading && (
-        <View
-          position={'absolute'}
-          bottom={0}
-          // justifyContent={'center'}
-          width={'100%'}
-          bgColor={'#bfbfbf7e'}
-          py={1}
-        >
-          <Spinner message='fetching users...' mt={0} />
-        </View>
-      )}
+        {scrollBottomLoading ? (
+          <View
+            position={'absolute'}
+            bottom={0}
+            // justifyContent={'center'}
+            width={'100%'}
+            bgColor={'#bfbfbf7e'}
+            py={1}
+          >
+            <Spinner message='fetching users...' mt={0} />
+          </View>
+        ) : null}
+      </Box>
 
       {/* Scroll To Top Arrow && Filters Buttons */}
-      {!showFilters && (
+      {!showFilters ? (
         <>
           <Button
             backgroundColor={'#FFFFFF'}
@@ -156,7 +162,7 @@ const HomeScreen: FC = () => {
             </Text>
           </Button>
         </>
-      )}
+      ) : null}
 
       <Filters
         showFilters={showFilters}
