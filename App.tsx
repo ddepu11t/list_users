@@ -4,18 +4,18 @@ import BottomNaviagtion from './src/navigation/BottomNaviagtion'
 
 const App = () => {
   return (
-    <NativeBaseProvider>
-      <View
-        // borderWidth={1}
-        flex={1}
-        // alignItems={"center"}
-        // justifyContent={"center"}
-      >
-        <NavigationContainer>
+    <NavigationContainer>
+      <NativeBaseProvider>
+        <View
+          // borderWidth={1}
+          flex={1}
+          // alignItems={"center"}
+          // justifyContent={"center"}
+        >
           <BottomNaviagtion />
-        </NavigationContainer>
-      </View>
-    </NativeBaseProvider>
+        </View>
+      </NativeBaseProvider>
+    </NavigationContainer>
   )
 }
 
