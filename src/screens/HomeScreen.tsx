@@ -19,7 +19,8 @@ type ScrollViewRef = IScrollViewProps & {
 
 const HomeScreen: FC = () => {
   const [users, setUsers] = useState<any[]>([])
-  const [results, setResults] = useState(3)
+  const [results, setResults] = useState(6)
+  const [gender, setGender] = useState('female')
 
   const [showFilters, setShowFilters] = useState(false)
 
@@ -30,12 +31,16 @@ const HomeScreen: FC = () => {
 
     const fetchUsers = async () => {
       try {
-        const request = await fetch(`https://randomuser.me/api/?results=${6}`)
+        const request = await fetch(
+          `https://randomuser.me/api/?results=${results}&gender=${gender}`
+        )
         const data: any = await request.json()
 
-        setUsers((prevState) => {
-          return [...prevState, ...data.results]
-        })
+        setUsers(data.results)
+
+        // setUsers((prevState) => {
+        //   return [...data.results]
+        // })
       } catch (err: any) {
         console.log(err)
       }
@@ -46,7 +51,7 @@ const HomeScreen: FC = () => {
     return () => {
       screenMounted = false
     }
-  }, [])
+  }, [gender])
 
   function debounce(func: () => void, timeout = 1000) {
     let timer: NodeJS.Timeout
@@ -176,6 +181,7 @@ const HomeScreen: FC = () => {
           width={'100%'}
           bgColor={'#FFFFFF'}
           borderTopRadius={15}
+          pb={5}
         >
           {/* Header */}
           <Box py={5}>
@@ -198,7 +204,15 @@ const HomeScreen: FC = () => {
             />
           </Box>
 
-          <Box flexDirection={'row'} justifyContent={'space-between'} px={5}>
+          {/* No of Results */}
+          <Box
+            borderBottomWidth={1}
+            borderColor={'#9797974D'}
+            flexDirection={'row'}
+            justifyContent={'space-between'}
+            px={5}
+            pb={3}
+          >
             <Text
               fontWeight={700}
               fontSize={16}
@@ -242,6 +256,48 @@ const HomeScreen: FC = () => {
                   setResults((prevState) => prevState + 1)
                 }}
               />
+            </Box>
+          </Box>
+
+          {/* Gender*/}
+          <Box
+            mt={5}
+            flexDirection={'row'}
+            justifyContent={'space-between'}
+            px={5}
+            pb={3}
+            borderBottomWidth={1}
+            borderColor={'#9797974D'}
+          >
+            <Text
+              fontWeight={700}
+              fontSize={16}
+              lineHeight={24}
+              color={'#323232'}
+            >
+              Gender:
+            </Text>
+
+            <Box flexDirection={'row'}>
+              <Button
+                bgColor={gender === 'female' ? '#463264' : '#E2E2E2'}
+                color={gender === 'female' ? '#FFFFFF' : '#ABABAB'}
+                borderTopLeftRadius={10}
+                borderBottomLeftRadius={10}
+                onPress={() => setGender('female')}
+              >
+                F
+              </Button>
+
+              <Button
+                bgColor={gender === 'male' ? '#463264' : '#E2E2E2'}
+                color={gender === 'male' ? '#FFFFFF' : '#ABABAB'}
+                borderTopRightRadius={10}
+                borderBottomRightRadius={10}
+                onPress={() => setGender('male')}
+              >
+                M
+              </Button>
             </Box>
           </Box>
         </View>
