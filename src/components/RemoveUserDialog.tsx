@@ -1,17 +1,23 @@
 import { Box, Button, Modal, ScrollView, Text } from 'native-base'
 import { FC, memo } from 'react'
 import { AntDesign } from '@expo/vector-icons'
+import { useGlobalContext } from '../context/context'
 
 interface Props {
   showRemoveModal: boolean
   setShowRemoveModal: React.Dispatch<React.SetStateAction<boolean>>
+  userEmail: string
 }
 
 const RemoveUserDialog: FC<Props> = ({
   showRemoveModal,
   setShowRemoveModal,
+  userEmail,
 }) => {
+  const { users, setUsers } = useGlobalContext()
+
   const handleOnPressYes = () => {
+    setUsers(users.filter((item) => item.email !== userEmail))
     setShowRemoveModal(false)
   }
 

@@ -6,17 +6,15 @@ import User from '../components/User'
 import { fetchUsers } from '../service/api'
 import Spinner from '../components/Spinner'
 import Filters from '../components/Filters'
-
-type Users = {}
+import { useGlobalContext } from '../context/context'
 
 const HomeScreen: FC = () => {
-  const [users, setUsers] = useState<{
-    data: any[]
-    loading: boolean
-  }>({ data: [], loading: true })
+  const { users, loading, setUsers } = useGlobalContext()
 
   const [results, setResults] = useState(7)
+
   const [gender, setGender] = useState('female')
+
   const [scrollBottomLoading, setScrollBottomLoading] = useState(false)
 
   const [showFilters, setShowFilters] = useState(false)
@@ -29,7 +27,7 @@ const HomeScreen: FC = () => {
     const callFetchUsers = async () => {
       const users = await fetchUsers(results, gender)
 
-      screenMounted && setUsers({ data: users, loading: false })
+      screenMounted && setUsers(users)
     }
 
     callFetchUsers()
@@ -42,12 +40,9 @@ const HomeScreen: FC = () => {
   const handleReachedEndOfTheList = async () => {
     setScrollBottomLoading(true)
 
-    const users = await fetchUsers(results, gender)
+    const newUsers = await fetchUsers(results, gender)
 
-    setUsers((prevState) => ({
-      data: [...prevState.data, ...users],
-      loading: false,
-    }))
+    setUsers([...users, ...newUsers])
 
     setScrollBottomLoading(false)
   }
@@ -59,31 +54,18 @@ const HomeScreen: FC = () => {
   return (
     <View flex={0}>
       <Box height={'100%'} px={0}>
-        {users.loading ? (
+        {loading ? (
           <Spinner message='fetching users...' />
         ) : (
           <SafeAreaView style={{ flex: 1 }}>
             <FlatList
               ref={flatListRef}
-              keyExtractor={(item) => item.dob.date}
-              data={users.data}
+              keyExtractor={(item) => item.dob}
+              data={users}
               renderItem={({ item }) => {
-                let { email, gender, phone } = item
-
-                return (
-                  <User
-                    key={item.dob.date}
-                    email={email}
-                    gender={gender}
-                    mobileNo={phone}
-                    dpURL={item.picture.medium}
-                    fullName={`${item.name.title} ${item.name.first} ${item.name.last}`}
-                    isActive={false}
-                  />
-                )
+                return <User key={item.dob} {...item} isActive={false} />
               }}
               onEndReached={handleReachedEndOfTheList}
-              ItemSeparatorComponent={() => <View />}
             />
           </SafeAreaView>
         )}
@@ -92,7 +74,6 @@ const HomeScreen: FC = () => {
           <View
             position={'absolute'}
             bottom={0}
-            // justifyContent={'center'}
             width={'100%'}
             bgColor={'#bfbfbf7e'}
             py={1}
