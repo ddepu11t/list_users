@@ -1,10 +1,10 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { Box, Button, FlatList, Text, View } from 'native-base'
 import { AntDesign, Octicons } from '@expo/vector-icons'
-import { Entypo } from '@expo/vector-icons'
 import User from '../components/User'
 import { fetchUsers } from '../service/api'
 import Spinner from '../components/Spinner'
+import Filters from '../components/Filters'
 
 type Users = {}
 
@@ -57,46 +57,44 @@ const HomeScreen: FC = () => {
 
   return (
     <View flex={0}>
-      <Box height={'100%'}>
-        {users.loading ? (
-          <Spinner message='fetching users...' />
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            keyExtractor={(item) => item.dob.date}
-            data={users.data}
-            renderItem={({ item }) => {
-              let { email, gender, phone } = item
+      {users.loading ? (
+        <Spinner message='fetching users...' />
+      ) : (
+        <FlatList
+          ref={flatListRef}
+          keyExtractor={(item) => item.dob.date}
+          data={users.data}
+          renderItem={({ item }) => {
+            let { email, gender, phone } = item
 
-              return (
-                <User
-                  key={item.dob.date}
-                  email={email}
-                  gender={gender}
-                  mobileNo={phone}
-                  dpURL={item.picture.medium}
-                  fullName={`${item.name.title} ${item.name.first} ${item.name.last}`}
-                  isActive={false}
-                />
-              )
-            }}
-            onEndReached={handleReachedEndOfTheList}
-          />
-        )}
+            return (
+              <User
+                key={item.dob.date}
+                email={email}
+                gender={gender}
+                mobileNo={phone}
+                dpURL={item.picture.medium}
+                fullName={`${item.name.title} ${item.name.first} ${item.name.last}`}
+                isActive={false}
+              />
+            )
+          }}
+          onEndReached={handleReachedEndOfTheList}
+        />
+      )}
 
-        {scrollBottomLoading && (
-          <View
-            position={'absolute'}
-            bottom={0}
-            // justifyContent={'center'}
-            width={'100%'}
-            bgColor={'#bfbfbf7e'}
-            py={1}
-          >
-            <Spinner message='fetching users...' mt={0} />
-          </View>
-        )}
-      </Box>
+      {scrollBottomLoading && (
+        <View
+          position={'absolute'}
+          bottom={0}
+          // justifyContent={'center'}
+          width={'100%'}
+          bgColor={'#bfbfbf7e'}
+          py={1}
+        >
+          <Spinner message='fetching users...' mt={0} />
+        </View>
+      )}
 
       {/* Scroll To Top Arrow && Filters Buttons */}
       {!showFilters && (
@@ -160,134 +158,14 @@ const HomeScreen: FC = () => {
         </>
       )}
 
-      {showFilters && (
-        <View
-          position={'absolute'}
-          bottom={0}
-          width={'100%'}
-          bgColor={'#FFFFFF'}
-          borderTopRadius={15}
-          pb={5}
-        >
-          {/* Header */}
-          <Box py={5}>
-            <Text
-              fontWeight={700}
-              fontSize={18}
-              lineHeight={21}
-              color={'#555555'}
-              textAlign={'center'}
-            >
-              Filters
-            </Text>
-
-            <Entypo
-              name='cross'
-              size={28}
-              color='black'
-              style={{ position: 'absolute', right: 15, top: 12 }}
-              onPress={() => setShowFilters(false)}
-            />
-          </Box>
-
-          {/* No of Results */}
-          <Box
-            borderBottomWidth={1}
-            borderColor={'#9797974D'}
-            flexDirection={'row'}
-            justifyContent={'space-between'}
-            px={5}
-            pb={3}
-          >
-            <Text
-              fontWeight={700}
-              fontSize={16}
-              lineHeight={24}
-              color={'#323232'}
-            >
-              No. of Results
-            </Text>
-
-            <Box flexDirection={'row'}>
-              <AntDesign
-                name='minuscircleo'
-                size={22}
-                color='black'
-                onPress={() => {
-                  setResults((prevState) => {
-                    if (prevState > 1) {
-                      return prevState - 1
-                    } else {
-                      return prevState
-                    }
-                  })
-                }}
-              />
-              <Text
-                fontWeight={400}
-                fontSize={16}
-                lineHeight={24}
-                color={'#323232'}
-                mx={2}
-                textAlign={'center'}
-              >
-                {results}
-              </Text>
-
-              <AntDesign
-                name='pluscircleo'
-                size={22}
-                color={'black'}
-                onPress={() => {
-                  setResults((prevState) => prevState + 1)
-                }}
-              />
-            </Box>
-          </Box>
-
-          {/* Gender */}
-          <Box
-            mt={5}
-            flexDirection={'row'}
-            justifyContent={'space-between'}
-            px={5}
-            pb={3}
-            borderBottomWidth={1}
-            borderColor={'#9797974D'}
-          >
-            <Text
-              fontWeight={700}
-              fontSize={16}
-              lineHeight={24}
-              color={'#323232'}
-            >
-              Gender:
-            </Text>
-
-            <Box flexDirection={'row'}>
-              <Button
-                bgColor={gender === 'female' ? '#463264' : '#E2E2E2'}
-                color={gender === 'female' ? '#FFFFFF' : '#ABABAB'}
-                borderTopLeftRadius={10}
-                borderBottomLeftRadius={10}
-                onPress={() => setGender('female')}
-              >
-                F
-              </Button>
-
-              <Button
-                bgColor={gender === 'male' ? '#463264' : '#E2E2E2'}
-                color={gender === 'male' ? '#FFFFFF' : '#ABABAB'}
-                borderTopRightRadius={10}
-                borderBottomRightRadius={10}
-                onPress={() => setGender('male')}
-              >
-                M
-              </Button>
-            </Box>
-          </Box>
-        </View>
-      )}
+      <Filters
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        gender={gender}
+        results={results}
+        setGender={setGender}
+        setResults={setResults}
+      />
     </View>
   )
 }
