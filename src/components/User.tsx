@@ -1,5 +1,6 @@
 import { Box, Button, Image, Text, View } from 'native-base'
 import { FC, memo, useState } from 'react'
+import Share from 'react-native-share'
 import { SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
@@ -9,7 +10,7 @@ interface Props {
   dpURL: string
   fullName: string
   isActive: boolean
-  mobileNo: string
+  mobileNumber: string
   email: string
   gender: string
 }
@@ -20,11 +21,19 @@ const User: FC<Props> = ({
   fullName,
   gender,
   isActive,
-  mobileNo,
+  mobileNumber,
 }) => {
   const [showRemoveModal, setShowRemoveModal] = useState(false)
 
-  const handleShareUser = () => {}
+  const handleShareUser = async () => {
+    try {
+      const shareResponse = await Share.open({
+        message: `Email: ${email}\nMobile Number: ${mobileNumber}`,
+      })
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
 
   const handleDeleteUser = () => {
     setShowRemoveModal(true)
@@ -113,7 +122,7 @@ const User: FC<Props> = ({
             </Box>
 
             <Text fontSize={14} fontWeight={400} lineHeight={'16'} mt={2}>
-              {mobileNo}
+              {mobileNumber}
             </Text>
           </Box>
 
@@ -126,6 +135,7 @@ const User: FC<Props> = ({
           <RemoveUserDialog
             showRemoveModal={showRemoveModal}
             setShowRemoveModal={setShowRemoveModal}
+            userEmail={email}
           />
         </View>
       </Swipeable>
