@@ -1,4 +1,5 @@
-import { NativeBaseProvider, Text, View } from 'native-base'
+import 'react-native-gesture-handler'
+import { NativeBaseProvider, View } from 'native-base'
 import { NavigationContainer } from '@react-navigation/native'
 import BottomNaviagtion from './src/navigation/BottomNaviagtion'
 
@@ -6,12 +7,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <NativeBaseProvider>
-        <View
-          // borderWidth={1}
-          flex={1}
-          // alignItems={"center"}
-          // justifyContent={"center"}
-        >
+        <View flex={1}>
           <BottomNaviagtion />
         </View>
       </NativeBaseProvider>
