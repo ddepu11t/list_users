@@ -4,9 +4,9 @@ import AccountScreen from '../screens/AccountScreen'
 import HomeScreen from '../screens/HomeScreen'
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 
-const Tab = createBottomTabNavigator()
-
 const BottomNavigation = () => {
+  const Tab = createBottomTabNavigator()
+
   return (
     <Tab.Navigator
       screenOptions={{
