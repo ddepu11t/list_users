@@ -2,7 +2,6 @@ import { FC, useEffect, useRef, useState } from 'react'
 import {
   Box,
   Button,
-  FlatList,
   IScrollViewProps,
   ScrollView,
   Text,
@@ -107,72 +106,79 @@ const HomeScreen: FC = () => {
       </Box>
 
       {/* Scroll To Top Arrow */}
-      <Button
-        backgroundColor={'#FFFFFF'}
-        borderRadius={'20'}
-        position={'absolute'}
-        right={'8'}
-        bottom={'24'}
-        width={'43'}
-        height={'65'}
-        padding={0}
-        alignItems={'center'}
-        justifyContent={'center'}
-        shadow={'5'}
-        borderWidth={0.5}
-        borderColor={'rgba(0,0,0,0.5)'}
-        onPress={() => {
-          scrollViewRef.current?.scrollTo({ y: 0, animated: true })
-        }}
-      >
-        <AntDesign
-          style={{ alignSelf: 'center' }}
-          name='arrowup'
-          size={28}
-          color='#463264'
-        />
-      </Button>
+      {showFilters === false && (
+        <>
+          <Button
+            backgroundColor={'#FFFFFF'}
+            borderRadius={'20'}
+            position={'absolute'}
+            right={'8'}
+            bottom={'24'}
+            width={'43'}
+            height={'65'}
+            padding={0}
+            alignItems={'center'}
+            justifyContent={'center'}
+            shadow={'5'}
+            borderWidth={0.5}
+            borderColor={'rgba(0,0,0,0.5)'}
+            onPress={() => {
+              scrollViewRef.current?.scrollTo({ y: 0, animated: true })
+            }}
+          >
+            <AntDesign
+              style={{ alignSelf: 'center' }}
+              name='arrowup'
+              size={28}
+              color='#463264'
+            />
+          </Button>
 
-      {/* Filters Icons */}
-      <Button
-        backgroundColor={'#FFFFFF'}
-        borderRadius={'full'}
-        position={'absolute'}
-        right={'7'}
-        bottom={5}
-        width={'55'}
-        height={'55'}
-        padding={0}
-        alignItems={'center'}
-        justifyContent={'center'}
-        shadow={'5'}
-        borderWidth={0.5}
-        borderColor={'rgba(0,0,0,0.5)'}
-      >
-        <Octicons
-          style={{ alignSelf: 'center' }}
-          name='settings'
-          size={24}
-          color='#463264'
-        />
-        <Text
-          color={'#463264'}
-          fontSize={11}
-          fontWeight={400}
-          lineHeight={16.5}
-        >
-          Filters
-        </Text>
-      </Button>
+          {/* Filters Icons */}
+          <Button
+            backgroundColor={'#FFFFFF'}
+            borderRadius={'full'}
+            position={'absolute'}
+            right={'7'}
+            bottom={5}
+            width={'55'}
+            height={'55'}
+            padding={0}
+            alignItems={'center'}
+            justifyContent={'center'}
+            shadow={'5'}
+            borderWidth={0.5}
+            borderColor={'rgba(0,0,0,0.5)'}
+            onPress={() => setShowFilters(true)}
+          >
+            <Octicons
+              style={{ alignSelf: 'center' }}
+              name='settings'
+              size={24}
+              color='#463264'
+            />
+            <Text
+              color={'#463264'}
+              fontSize={11}
+              fontWeight={400}
+              lineHeight={16.5}
+            >
+              Filters
+            </Text>
+          </Button>
+        </>
+      )}
 
-      {true && (
+      {showFilters && (
         <View
           position={'absolute'}
           bottom={0}
           width={'100%'}
           bgColor={'#FFFFFF'}
+          borderTopRadius={15}
         >
-          <Box>
+          {/* Header */}
+          <Box py={5}>
             <Text
               fontWeight={700}
               fontSize={18}
@@ -185,10 +191,58 @@ const HomeScreen: FC = () => {
 
             <Entypo
               name='cross'
-              size={24}
+              size={28}
               color='black'
-              style={{ position: 'absolute', right: 0 }}
+              style={{ position: 'absolute', right: 15, top: 12 }}
+              onPress={() => setShowFilters(false)}
             />
+          </Box>
+
+          <Box flexDirection={'row'} justifyContent={'space-between'} px={5}>
+            <Text
+              fontWeight={700}
+              fontSize={16}
+              lineHeight={24}
+              color={'#323232'}
+            >
+              No. of Results
+            </Text>
+
+            <Box flexDirection={'row'}>
+              <AntDesign
+                name='minuscircleo'
+                size={22}
+                color='black'
+                onPress={() => {
+                  setResults((prevState) => {
+                    if (prevState > 1) {
+                      return prevState - 1
+                    } else {
+                      return prevState
+                    }
+                  })
+                }}
+              />
+              <Text
+                fontWeight={400}
+                fontSize={16}
+                lineHeight={24}
+                color={'#323232'}
+                mx={2}
+                textAlign={'center'}
+              >
+                {results}
+              </Text>
+
+              <AntDesign
+                name='pluscircleo'
+                size={22}
+                color={'black'}
+                onPress={() => {
+                  setResults((prevState) => prevState + 1)
+                }}
+              />
+            </Box>
           </Box>
         </View>
       )}
