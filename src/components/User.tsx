@@ -1,8 +1,9 @@
 import { Box, Button, Image, Text, View } from 'native-base'
-import { FC, memo } from 'react'
+import { FC, memo, useState } from 'react'
 import { SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
+import RemoveUserDialog from './RemoveUserDialog'
 
 interface Props {
   dpURL: string
@@ -21,38 +22,49 @@ const User: FC<Props> = ({
   isActive,
   mobileNo,
 }) => {
+  const [showRemoveModal, setShowRemoveModal] = useState(false)
+
+  const handleShareUser = () => {}
+
+  const handleDeleteUser = () => {
+    setShowRemoveModal(true)
+  }
+
   const rightSwipeActions = () => {
     return (
-      <View flexDirection={'row'}>
-        <Box
+      <View
+        flexDirection={'row'}
+        justifyContent={'flex-end'}
+        flex={1}
+        height={'91%'}
+      >
+        <Button
+          padding={0}
           bgColor={'#42A5F5'}
-          height={'90%'}
           width={76}
           justifyContent={'center'}
           alignItems={'center'}
+          onPress={handleShareUser}
         >
           <SimpleLineIcons name='share-alt' size={24} color='#ffffff' />
-        </Box>
+        </Button>
 
-        <Box
+        <Button
+          padding={0}
           bgColor={'#E2658C'}
-          height={'90%'}
           width={76}
           justifyContent={'center'}
           alignItems={'center'}
+          onPress={handleDeleteUser}
         >
           <MaterialCommunityIcons
             name='window-close'
             size={24}
             color='#f7f7f7'
           />
-        </Box>
+        </Button>
       </View>
     )
-  }
-
-  const swipeFromLeftOpen = () => {
-    console.log('Swipe from left')
   }
 
   const swipeFromRightOpen = () => {
@@ -64,7 +76,6 @@ const User: FC<Props> = ({
       <Swipeable
         renderRightActions={rightSwipeActions}
         onSwipeableRightOpen={swipeFromRightOpen}
-        onSwipeableLeftOpen={swipeFromLeftOpen}
       >
         <View
           flexDirection={'row'}
@@ -111,6 +122,11 @@ const User: FC<Props> = ({
               {gender}
             </Button>
           </Box>
+
+          <RemoveUserDialog
+            showRemoveModal={showRemoveModal}
+            setShowRemoveModal={setShowRemoveModal}
+          />
         </View>
       </Swipeable>
     </GestureHandlerRootView>
