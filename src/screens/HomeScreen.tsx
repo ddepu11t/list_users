@@ -1,98 +1,71 @@
 import { FC, useEffect, useRef, useState } from 'react'
-import {
-  Box,
-  Button,
-  IScrollViewProps,
-  ScrollView,
-  Text,
-  View,
-} from 'native-base'
+import { Box, Button, FlatList, Text, View } from 'native-base'
 import { AntDesign, Octicons } from '@expo/vector-icons'
 import { Entypo } from '@expo/vector-icons'
 import User from '../components/User'
+import { fetchUsers } from '../service/api'
+import Spinner from '../components/Spinner'
 
 type Users = {}
 
-type ScrollViewRef = IScrollViewProps & {
-  scrollTo: (options?: { y: number; x?: number; animated: boolean }) => void
-}
-
 const HomeScreen: FC = () => {
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<{
+    data: any[]
+    loading: boolean
+  }>({ data: [], loading: true })
+
   const [results, setResults] = useState(6)
   const [gender, setGender] = useState('female')
+  const [scrollBottomLoading, setScrollBottomLoading] = useState(false)
 
   const [showFilters, setShowFilters] = useState(false)
 
-  const scrollViewRef = useRef<ScrollViewRef>()
+  const flatListRef = useRef<any>(null)
 
   useEffect(() => {
     let screenMounted = true
 
-    const fetchUsers = async () => {
-      try {
-        const request = await fetch(
-          `https://randomuser.me/api/?results=${results}&gender=${gender}`
-        )
-        const data: any = await request.json()
+    const callFetchUsers = async () => {
+      const users = await fetchUsers(results, gender)
 
-        setUsers(data.results)
-
-        // setUsers((prevState) => {
-        //   return [...data.results]
-        // })
-      } catch (err: any) {
-        console.log(err)
-      }
+      screenMounted && setUsers({ data: users, loading: false })
     }
 
-    fetchUsers()
+    callFetchUsers()
 
     return () => {
       screenMounted = false
     }
   }, [gender])
 
-  function debounce(func: () => void, timeout = 1000) {
-    let timer: NodeJS.Timeout
+  const handleReachedEndOfTheList = async () => {
+    setScrollBottomLoading(true)
 
-    return () => {
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        func()
-      }, timeout)
-    }
+    const users = await fetchUsers(results, gender)
+
+    setUsers((prevState) => ({
+      data: [...prevState.data, ...users],
+      loading: false,
+    }))
+
+    setScrollBottomLoading(false)
+  }
+
+  const handleScrollToTop = () => {
+    flatListRef?.current?.scrollToOffset({ animated: true, y: 0 })
   }
 
   return (
     <View flex={0}>
       <Box height={'100%'}>
-        <ScrollView
-          ref={scrollViewRef}
-          onScrollEndDrag={debounce(() => {
-            const fetchUsers = async () => {
-              try {
-                const request = await fetch(
-                  `https://randomuser.me/api/?results=${results}`
-                )
-
-                const data: any = await request.json()
-
-                setUsers((prevState) => {
-                  return [...prevState, ...data.results]
-                })
-              } catch (err: any) {
-                console.log(err)
-              }
-            }
-
-            fetchUsers()
-
-            console.log('Scroll End')
-          })}
-        >
-          {users &&
-            users.map((item) => {
+        {users.loading ? (
+          <Spinner message='fetching users...' />
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            keyExtractor={(item) => item.dob.date}
+            data={users.data}
+            renderItem={({ item }) => {
               let { email, gender, phone } = item
 
               return (
@@ -106,12 +79,27 @@ const HomeScreen: FC = () => {
                   isActive={false}
                 />
               )
-            })}
-        </ScrollView>
+            }}
+            onEndReached={handleReachedEndOfTheList}
+          />
+        )}
+
+        {scrollBottomLoading && (
+          <View
+            position={'absolute'}
+            bottom={0}
+            // justifyContent={'center'}
+            width={'100%'}
+            bgColor={'#bfbfbf7e'}
+            py={1}
+          >
+            <Spinner message='fetching users...' mt={0} />
+          </View>
+        )}
       </Box>
 
-      {/* Scroll To Top Arrow */}
-      {showFilters === false && (
+      {/* Scroll To Top Arrow && Filters Buttons */}
+      {!showFilters && (
         <>
           <Button
             backgroundColor={'#FFFFFF'}
@@ -127,9 +115,7 @@ const HomeScreen: FC = () => {
             shadow={'5'}
             borderWidth={0.5}
             borderColor={'rgba(0,0,0,0.5)'}
-            onPress={() => {
-              scrollViewRef.current?.scrollTo({ y: 0, animated: true })
-            }}
+            onPress={handleScrollToTop}
           >
             <AntDesign
               style={{ alignSelf: 'center' }}
@@ -259,7 +245,7 @@ const HomeScreen: FC = () => {
             </Box>
           </Box>
 
-          {/* Gender*/}
+          {/* Gender */}
           <Box
             mt={5}
             flexDirection={'row'}
