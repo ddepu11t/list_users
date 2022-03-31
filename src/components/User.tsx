@@ -5,14 +5,15 @@ import { SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import RemoveUserDialog from './RemoveUserDialog'
+import { Animated } from 'react-native'
 
 interface Props {
   dpURL: string
   fullName: string
-  isActive: boolean
   mobileNumber: string
   email: string
   gender: string
+  scale: Animated.AnimatedInterpolation
 }
 
 const User: FC<Props> = ({
@@ -20,8 +21,8 @@ const User: FC<Props> = ({
   email,
   fullName,
   gender,
-  isActive,
   mobileNumber,
+  scale,
 }) => {
   const [showRemoveModal, setShowRemoveModal] = useState(false)
 
@@ -46,6 +47,8 @@ const User: FC<Props> = ({
         justifyContent={'flex-end'}
         flex={1}
         height={'91%'}
+        bgColor={'rgba(101, 100, 100, 0.8)51, 51,0.8)'}
+        mx={3}
       >
         <Button
           padding={0}
@@ -76,24 +79,22 @@ const User: FC<Props> = ({
     )
   }
 
-  const swipeFromRightOpen = () => {
-    console.log('Swipe from right')
-  }
-
   return (
     <GestureHandlerRootView>
-      <Swipeable
-        renderRightActions={rightSwipeActions}
-        onSwipeableRightOpen={swipeFromRightOpen}
-      >
-        <View
-          flexDirection={'row'}
-          bgColor={'#FFFFFF'}
-          paddingX={'3'}
-          paddingY={'2'}
-          mb={'3'}
-          borderRadius={'6'}
-          // shadow={'0.5'}
+      <Swipeable renderRightActions={rightSwipeActions}>
+        <Animated.View
+          // onLayout={(e) => {
+          //   console.log(e.nativeEvent.layout)
+          // }}
+          style={{
+            flexDirection: 'row',
+            backgroundColor: '#FFFFFF',
+            paddingVertical: 10,
+            marginBottom: 8,
+            marginHorizontal: 10,
+            borderRadius: 0,
+            transform: [{ scale: scale }],
+          }}
         >
           <Image
             source={{ uri: dpURL }}
@@ -137,7 +138,7 @@ const User: FC<Props> = ({
             setShowRemoveModal={setShowRemoveModal}
             userEmail={email}
           />
-        </View>
+        </Animated.View>
       </Swipeable>
     </GestureHandlerRootView>
   )
