@@ -1,26 +1,30 @@
 import { Box, Button, Center, Modal, Text } from 'native-base'
-import { FC, memo } from 'react'
+import { FC, memo, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons'
+
+type FilterType = {
+  gender: string
+  results: number
+}
 
 interface Props {
   showFilters: boolean
   setShowFilters: React.Dispatch<React.SetStateAction<boolean>>
-  setGender: React.Dispatch<React.SetStateAction<string>>
-  setResults: React.Dispatch<React.SetStateAction<number>>
-  gender: string
-  results: number
+  filters: FilterType
+  setFilters: React.Dispatch<React.SetStateAction<FilterType>>
 }
 
 const Filters: FC<Props> = ({
   showFilters,
   setShowFilters,
-  gender,
-  setGender,
-  setResults,
-  results,
+  filters,
+  setFilters,
 }) => {
+  const [newResults, setNewResults] = useState(filters.results)
+  const [newGender, setNewGender] = useState(filters.gender)
+
   const handleDecreseNoOfResults = () => {
-    setResults((prevState) => {
+    setNewResults((prevState) => {
       if (prevState > 1) {
         return prevState - 1
       } else {
@@ -30,7 +34,16 @@ const Filters: FC<Props> = ({
   }
 
   const handleIncreaseNoOfResults = () => {
-    setResults((prevState) => prevState + 1)
+    setNewResults((prevState) => prevState + 1)
+  }
+
+  const handleCancel = () => {
+    setShowFilters(false)
+  }
+
+  const handleSave = () => {
+    setFilters({ gender: newGender, results: newResults })
+    setShowFilters(false)
   }
 
   return (
@@ -97,7 +110,7 @@ const Filters: FC<Props> = ({
                   mx={2}
                   textAlign={'center'}
                 >
-                  {results}
+                  {newResults}
                 </Text>
 
                 <AntDesign
@@ -130,21 +143,21 @@ const Filters: FC<Props> = ({
 
               <Box flexDirection={'row'}>
                 <Button
-                  bgColor={gender === 'female' ? '#463264' : '#E2E2E2'}
-                  color={gender === 'female' ? '#FFFFFF' : '#ABABAB'}
+                  bgColor={newGender === 'female' ? '#463264' : '#E2E2E2'}
+                  color={newGender === 'female' ? '#FFFFFF' : '#ABABAB'}
                   borderTopLeftRadius={10}
                   borderBottomLeftRadius={10}
-                  onPress={() => setGender('female')}
+                  onPress={() => setNewGender('female')}
                 >
                   F
                 </Button>
 
                 <Button
-                  bgColor={gender === 'male' ? '#463264' : '#E2E2E2'}
-                  color={gender === 'male' ? '#FFFFFF' : '#ABABAB'}
+                  bgColor={newGender === 'male' ? '#463264' : '#E2E2E2'}
+                  color={newGender === 'male' ? '#FFFFFF' : '#ABABAB'}
                   borderTopRightRadius={10}
                   borderBottomRightRadius={10}
-                  onPress={() => setGender('male')}
+                  onPress={() => setNewGender('male')}
                 >
                   M
                 </Button>
@@ -152,26 +165,35 @@ const Filters: FC<Props> = ({
             </Box>
           </Modal.Body>
 
-          {/* <Modal.Footer>
-            <Button.Group space={2}>
+          <Modal.Footer>
+            <Button.Group
+              space={2}
+              justifyContent={'space-between'}
+              width={'90%'}
+              mx={'auto'}
+              // borderWidth={1}
+            >
               <Button
                 variant='ghost'
                 colorScheme='blueGray'
-                onPress={() => {
-                  setShowFilters(false)
-                }}
+                onPress={handleCancel}
+                bgColor={'#FFFFFF'}
+                color={'#555555'}
+                width={'50%'}
               >
                 Cancel
               </Button>
+
               <Button
-                onPress={() => {
-                  setShowFilters(false)
-                }}
+                onPress={handleSave}
+                bgColor={'#463264'}
+                color={'#FFFFFF'}
+                width={'50%'}
               >
                 Save
               </Button>
             </Button.Group>
-          </Modal.Footer> */}
+          </Modal.Footer>
         </Modal.Content>
       </Modal>
     </Center>
