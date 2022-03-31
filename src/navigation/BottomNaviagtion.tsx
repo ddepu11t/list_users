@@ -1,7 +1,7 @@
 import { View } from 'native-base'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import AccountScreen from '../screens/AccountScreen'
-import HomeScreen from '../screens/HomeScreen'
+import HomeScreen from '../screens/HomeScreen/HomeScreen'
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 
 const BottomNavigation = () => {
