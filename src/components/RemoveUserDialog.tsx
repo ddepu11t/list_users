@@ -7,12 +7,14 @@ interface Props {
   showRemoveModal: boolean
   setShowRemoveModal: React.Dispatch<React.SetStateAction<boolean>>
   userEmail: string
+  fullName: string
 }
 
 const RemoveUserDialog: FC<Props> = ({
   showRemoveModal,
   setShowRemoveModal,
   userEmail,
+  fullName,
 }) => {
   const { users, setUsers } = useGlobalContext()
 
@@ -42,7 +44,7 @@ const RemoveUserDialog: FC<Props> = ({
             lineHeight={21}
             mt={5}
           >
-            Remove Bill Murry
+            Remove {fullName}
           </Text>
 
           <Text
