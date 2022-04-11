@@ -19,7 +19,7 @@ const HomeScreen: FC = () => {
   const { users, loading, setUsers } = useGlobalContext()
 
   const [filters, setFilters] = useState({
-    gender: 'female',
+    gender: 'all',
     results: 3,
     countries: {
       US: true,
@@ -43,6 +43,8 @@ const HomeScreen: FC = () => {
       const users = await fetchUsers(filters, 20)
 
       screenMounted && setUsers(users)
+
+      handleScrollToTop()
     }
 
     callFetchUsers()

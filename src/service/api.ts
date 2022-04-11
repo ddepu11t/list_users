@@ -16,13 +16,13 @@ const fetchUsers = async (filters: FilterType, initialResults?: number) => {
       }
     }
 
-    const request = await fetch(
-      `https://randomuser.me/api/?results=${
-        initialResults ? initialResults : results
-      }&gender=${gender}${
-        nationalities.length > 0 ? `&nat=${nationalities.join(',')}` : ''
-      }`
-    )
+    const api = `https://randomuser.me/api/?results=${
+      initialResults ? initialResults : results
+    }${gender === 'all' ? `` : `&gender=${gender}`}${
+      nationalities.length > 0 ? `&nat=${nationalities.join(',')}` : ''
+    }`
+
+    const request = await fetch(api)
 
     const data: any = await request.json()
 
