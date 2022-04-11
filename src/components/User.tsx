@@ -1,5 +1,5 @@
 import { Box, Button, Image, Text, View } from 'native-base'
-import { FC, memo, useState } from 'react'
+import { FC, memo, useEffect, useRef, useState } from 'react'
 import Share from 'react-native-share'
 import { SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -44,10 +44,10 @@ const User: FC<Props> = ({
     <View
       flexDirection={'row'}
       justifyContent={'flex-end'}
-      flex={1}
+      // borderWidth={1}
       height={'91%'}
-      bgColor={'rgba(101, 100, 100, 0.8)51, 51,0.8)'}
-      mx={3}
+      // bgColor={'rgba(101, 100, 100, 0.8)51, 51,0.8)'}
+      mr={3}
     >
       <Button
         padding={0}
@@ -75,7 +75,10 @@ const User: FC<Props> = ({
 
   return (
     <GestureHandlerRootView>
-      <Swipeable renderRightActions={RightSwipeActions}>
+      <Swipeable
+        renderRightActions={RightSwipeActions}
+        useNativeAnimations={true}
+      >
         <Animated.View
           // onLayout={(e) => {
           //   console.log(e.nativeEvent.layout)
@@ -84,8 +87,8 @@ const User: FC<Props> = ({
             flexDirection: 'row',
             backgroundColor: '#FFFFFF',
             paddingVertical: 10,
+            paddingHorizontal: 10,
             marginBottom: 8,
-            marginHorizontal: 10,
             borderRadius: 0,
             transform: [{ scale: scale }],
           }}
@@ -127,12 +130,14 @@ const User: FC<Props> = ({
             </Button>
           </Box>
 
-          <RemoveUserDialog
-            showRemoveModal={showRemoveModal}
-            setShowRemoveModal={setShowRemoveModal}
-            userEmail={email}
-            fullName={fullName}
-          />
+          {showRemoveModal ? (
+            <RemoveUserDialog
+              showRemoveModal={showRemoveModal}
+              setShowRemoveModal={setShowRemoveModal}
+              userEmail={email}
+              fullName={fullName}
+            />
+          ) : null}
         </Animated.View>
       </Swipeable>
     </GestureHandlerRootView>
