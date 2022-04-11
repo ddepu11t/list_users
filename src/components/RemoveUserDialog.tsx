@@ -20,7 +20,6 @@ const RemoveUserDialog: FC<Props> = ({
 
   const handleOnPressYes = () => {
     setUsers(users.filter((item) => item.email !== userEmail))
-    setShowRemoveModal(false)
   }
 
   const handleOnPressNo = () => {
@@ -28,11 +27,7 @@ const RemoveUserDialog: FC<Props> = ({
   }
 
   return (
-    <Modal
-      isOpen={showRemoveModal}
-      onClose={() => setShowRemoveModal(false)}
-      size={'md'}
-    >
+    <Modal isOpen={showRemoveModal} size={'lg'}>
       <Modal.Content maxH='212' bgColor={'#FFFFFF'}>
         <Modal.Header alignItems={'center'}>
           <AntDesign name='delete' size={28} color='#42A5F5' />
