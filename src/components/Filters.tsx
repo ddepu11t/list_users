@@ -1,11 +1,7 @@
 import { Box, Button, Center, Modal, Text } from 'native-base'
 import { FC, memo, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons'
-
-type FilterType = {
-  gender: string
-  results: number
-}
+import { CountriesType, FilterType } from '../types'
 
 interface Props {
   showFilters: boolean
@@ -23,6 +19,8 @@ const Filters: FC<Props> = ({
   const [newResults, setNewResults] = useState(filters.results)
   const [newGender, setNewGender] = useState(filters.gender)
 
+  const [newCountries, setNewCountries] = useState(filters.countries)
+
   const handleDecreseNoOfResults = () => {
     setNewResults((prevState) => {
       if (prevState > 1) {
@@ -37,13 +35,27 @@ const Filters: FC<Props> = ({
     setNewResults((prevState) => prevState + 1)
   }
 
-  const handleCancel = () => {
-    setShowFilters(false)
+  const handleReset = () => {
+    setNewGender(filters.gender)
+    setNewResults(filters.results)
+    setNewCountries(filters.countries)
   }
 
   const handleSave = () => {
-    setFilters({ gender: newGender, results: newResults })
+    setFilters({
+      gender: newGender,
+      results: newResults,
+      countries: newCountries,
+    })
+
     setShowFilters(false)
+  }
+
+  const handleToggleCountry = (country: 'US' | 'FR' | 'GB') => {
+    setNewCountries((prevCountries) => ({
+      ...prevCountries,
+      [country]: !prevCountries[country],
+    }))
   }
 
   return (
@@ -63,9 +75,9 @@ const Filters: FC<Props> = ({
             marginTop: 'auto',
           }}
         >
-          <Modal.CloseButton />
+          <Modal.CloseButton mt={4} size={'3'} mr={6} />
 
-          <Modal.Header>
+          <Modal.Header py={8}>
             <Text
               fontWeight={700}
               fontSize={18}
@@ -77,6 +89,7 @@ const Filters: FC<Props> = ({
             </Text>
           </Modal.Header>
 
+          {/* Filters */}
           <Modal.Body>
             <Box
               borderBottomWidth={1}
@@ -163,6 +176,55 @@ const Filters: FC<Props> = ({
                 </Button>
               </Box>
             </Box>
+
+            {/* Country */}
+            <Box mt={5} px={2} pb={3}>
+              <Text
+                fontWeight={700}
+                fontSize={16}
+                lineHeight={24}
+                color={'#323232'}
+              >
+                Country:
+              </Text>
+
+              <Box flexDirection={'row'} mt={4} pb={12}>
+                <Button
+                  bgColor={newCountries.US ? '#463264' : '#E2E2E2'}
+                  color={newCountries.US ? '#FFFFFF' : '#ABABAB'}
+                  borderRadius={20}
+                  borderColor={'#555555'}
+                  borderWidth={1}
+                  mr={5}
+                  onPress={() => handleToggleCountry('US')}
+                >
+                  Unites-States
+                </Button>
+
+                <Button
+                  bgColor={newCountries.FR ? '#463264' : '#E2E2E2'}
+                  color={newCountries.FR ? '#FFFFFF' : '#555555'}
+                  borderRadius={20}
+                  borderColor={'#555555'}
+                  borderWidth={1}
+                  mr={5}
+                  onPress={() => handleToggleCountry('FR')}
+                >
+                  Francce
+                </Button>
+
+                <Button
+                  bgColor={newCountries.GB ? '#463264' : '#E2E2E2'}
+                  color={newCountries.GB ? '#FFFFFF' : '#555555'}
+                  borderRadius={20}
+                  borderColor={'#555555'}
+                  borderWidth={1}
+                  onPress={() => handleToggleCountry('GB')}
+                >
+                  United Kingdom
+                </Button>
+              </Box>
+            </Box>
           </Modal.Body>
 
           <Modal.Footer>
@@ -176,12 +238,12 @@ const Filters: FC<Props> = ({
               <Button
                 variant='ghost'
                 colorScheme='blueGray'
-                onPress={handleCancel}
+                onPress={handleReset}
                 bgColor={'#FFFFFF'}
                 color={'#555555'}
                 width={'50%'}
               >
-                Cancel
+                Reset
               </Button>
 
               <Button
@@ -190,7 +252,7 @@ const Filters: FC<Props> = ({
                 color={'#FFFFFF'}
                 width={'50%'}
               >
-                Save
+                Submit
               </Button>
             </Button.Group>
           </Modal.Footer>

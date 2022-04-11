@@ -1,7 +1,27 @@
-const fetchUsers = async (results: number, gender: string) => {
+import { CountriesType, FilterType } from '../types'
+
+const fetchUsers = async (filters: FilterType, initialResults?: number) => {
+  const { countries, gender, results } = filters
+
   try {
+    let nationalities = []
+
+    if (countries) {
+      let property: keyof CountriesType
+
+      for (property in countries) {
+        if (countries[property]) {
+          nationalities.push(property)
+        }
+      }
+    }
+
     const request = await fetch(
-      `https://randomuser.me/api/?results=${results}&gender=${gender}`
+      `https://randomuser.me/api/?results=${
+        initialResults ? initialResults : results
+      }&gender=${gender}${
+        nationalities.length > 0 ? `&nat=${nationalities.join(',')}` : ''
+      }`
     )
 
     const data: any = await request.json()
