@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Box, Button, Text, View } from 'native-base'
-import { Animated, SafeAreaView } from 'react-native'
+import { Animated, Platform } from 'react-native'
 import { AntDesign, Octicons } from '@expo/vector-icons'
 import User from '../../components/User'
 import { fetchUsers } from '../../service/api'
@@ -21,6 +21,11 @@ const HomeScreen: FC = () => {
   const [filters, setFilters] = useState({
     gender: 'female',
     results: 3,
+    countries: {
+      US: true,
+      FR: false,
+      GB: true,
+    },
   })
 
   const [fetchingMoreUsers, setFetchingMoreUsers] = useState(false)
@@ -35,7 +40,7 @@ const HomeScreen: FC = () => {
     let screenMounted = true
 
     const callFetchUsers = async () => {
-      const users = await fetchUsers(10, filters.gender)
+      const users = await fetchUsers(filters, 20)
 
       screenMounted && setUsers(users)
     }
@@ -45,7 +50,7 @@ const HomeScreen: FC = () => {
     return () => {
       screenMounted = false
     }
-  }, [filters.gender])
+  }, [filters.gender, filters.countries])
 
   const handleScrollToTop = () => {
     flatListRef?.current?.scrollToOffset({ animated: true, y: 0 })
@@ -55,7 +60,7 @@ const HomeScreen: FC = () => {
     if (!fetchingMoreUsers) {
       setFetchingMoreUsers(true)
 
-      const newUsers = await fetchUsers(filters.results, filters.gender)
+      const newUsers = await fetchUsers(filters)
 
       setUsers([...users, ...newUsers])
 
@@ -75,7 +80,7 @@ const HomeScreen: FC = () => {
   const flatListRederItem = useCallback(({ item, index }: RenderItemProps) => {
     const itemSize = 118 + 8
 
-    const inputRange = [-1, 0, itemSize * index, itemSize * (index + 2)]
+    const inputRange = [-1, 0, itemSize * index, itemSize * (index + 1)]
 
     const scale = scrollY.interpolate({
       inputRange,
@@ -95,7 +100,7 @@ const HomeScreen: FC = () => {
   const keyExtractor = useCallback((item) => item.dob, [])
 
   return (
-    <View flex={0}>
+    <View flex={0} mt={Platform.OS === 'ios' ? 8 : 2} borderWidth={0}>
       <Box height={'100%'}>
         {loading ? (
           <Spinner message='fetching users...' />
