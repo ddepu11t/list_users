@@ -40,48 +40,42 @@ const User: FC<Props> = ({
     setShowRemoveModal(true)
   }
 
-  const rightSwipeActions = () => {
-    return (
-      <View
-        flexDirection={'row'}
-        justifyContent={'flex-end'}
-        flex={1}
-        height={'91%'}
-        bgColor={'rgba(101, 100, 100, 0.8)51, 51,0.8)'}
-        mx={3}
+  const RightSwipeActions = () => (
+    <View
+      flexDirection={'row'}
+      justifyContent={'flex-end'}
+      flex={1}
+      height={'91%'}
+      bgColor={'rgba(101, 100, 100, 0.8)51, 51,0.8)'}
+      mx={3}
+    >
+      <Button
+        padding={0}
+        bgColor={'#42A5F5'}
+        width={76}
+        justifyContent={'center'}
+        alignItems={'center'}
+        onPress={handleShareUser}
       >
-        <Button
-          padding={0}
-          bgColor={'#42A5F5'}
-          width={76}
-          justifyContent={'center'}
-          alignItems={'center'}
-          onPress={handleShareUser}
-        >
-          <SimpleLineIcons name='share-alt' size={24} color='#ffffff' />
-        </Button>
+        <SimpleLineIcons name='share-alt' size={24} color='#ffffff' />
+      </Button>
 
-        <Button
-          padding={0}
-          bgColor={'#E2658C'}
-          width={76}
-          justifyContent={'center'}
-          alignItems={'center'}
-          onPress={handleDeleteUser}
-        >
-          <MaterialCommunityIcons
-            name='window-close'
-            size={24}
-            color='#f7f7f7'
-          />
-        </Button>
-      </View>
-    )
-  }
+      <Button
+        padding={0}
+        bgColor={'#E2658C'}
+        width={76}
+        justifyContent={'center'}
+        alignItems={'center'}
+        onPress={handleDeleteUser}
+      >
+        <MaterialCommunityIcons name='window-close' size={24} color='#f7f7f7' />
+      </Button>
+    </View>
+  )
 
   return (
     <GestureHandlerRootView>
-      <Swipeable renderRightActions={rightSwipeActions}>
+      <Swipeable renderRightActions={RightSwipeActions}>
         <Animated.View
           // onLayout={(e) => {
           //   console.log(e.nativeEvent.layout)
@@ -137,6 +131,7 @@ const User: FC<Props> = ({
             showRemoveModal={showRemoveModal}
             setShowRemoveModal={setShowRemoveModal}
             userEmail={email}
+            fullName={fullName}
           />
         </Animated.View>
       </Swipeable>
